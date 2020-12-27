@@ -38,7 +38,7 @@
 
 .UtilizationFree {
   background-color: blue;
-  color:white;
+  color: white;
   text-align: center;
   display: inline-block;
 }
@@ -47,7 +47,7 @@
   clear: both;
   text-align: center;
   align-content: center;
-  width:100%;
+  width: 100%;
 }
 
 .FileBrowser {
@@ -57,7 +57,7 @@
 }
 
 .DeviceFile div {
-  display:inline-block;
+  display: inline-block;
   padding-right: 10px;
   margin-top: 5px;
   margin-bottom: 5px;

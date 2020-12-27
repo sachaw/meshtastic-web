@@ -1,16 +1,20 @@
 import * as React from "react";
 import { Component } from "react";
-import "./message.css";
-import { PortNumEnum } from "../../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
+/**
+ * @todo fix in meshtastic library - export all protobuf types/enums
+ */
+import { Protobuf } from "@meshtastic/meshtasticjs";
 
-class Message extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
+class Message extends Component<any, any> {
   sentByUs() {
-    return this.props.message.from == "476493745";
+    return this.props.message.from === "476493745";
   }
 
   messageBody() {
-
-    if (this.props.message.decoded.data.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
+    if (
+      this.props.message.decoded.data.portnum ===
+      Protobuf.PortNumEnum.TEXT_MESSAGE_APP
+    ) {
       return this.props.message.decoded.data.payload;
     } else {
       return "Binary data";
@@ -18,12 +22,11 @@ class Message extends Component<any,any> { // TODO: Properly define / enforce Ty
   }
 
   render() {
-    console.log("Rendering message");
     console.log(this.props.message);
     let rxTime = new Date(this.props.message.rxTime);
     return (
       <div
-        className="Message"
+        className="flex w-full h-12"
         style={{
           backgroundColor: this.sentByUs() ? "red" : "blue",
           color: this.sentByUs() ? "black" : "white",
@@ -50,16 +53,5 @@ class Message extends Component<any,any> { // TODO: Properly define / enforce Ty
     );
   }
 }
-
-interface MessageProps {
-  message: {
-    from: string,
-    decoded: any, // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-    rxTime: string,
-    rxSnr: any // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-    hopLimit: any // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-  }
-}
-
 
 export default Message;

@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Component } from "react";
 import Message from "./message";
-import "./messages.css";
+import { FaPaperPlane } from "react-icons/fa";
 
-class Messages extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-  constructor(props) {
+class Messages extends Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.SendMessage = this.SendMessage.bind(this);
     this.NewMessageChange = this.NewMessageChange.bind(this);
@@ -21,7 +21,7 @@ class Messages extends Component<any,any> { // TODO: Properly define / enforce T
     });
   }
 
-  NewMessageChange(event) {
+  NewMessageChange(event: any) {
     this.setState({
       NewMessageValue: event.target.value,
     });
@@ -29,40 +29,30 @@ class Messages extends Component<any,any> { // TODO: Properly define / enforce T
 
   render() {
     return (
-      <div className="Messages">
-        <div className="MessageHistory">
-          Messages:
-          {this.props.messages.map((value, index) => (
+      <div className="flex flex-col h-full">
+        <div className="flex-grow">
+          {this.props.messages.map((value: any, index: any) => (
             <Message message={value} />
           ))}
         </div>
-        <div className="NewMessage">
-          <label>
-            Compose Message:
-            <br />
-            <textarea
-              name="messageEntry"
-              onChange={this.NewMessageChange}
-              value={this.state.NewMessageValue}
-            />
-          </label>
-          <button name="Send" onClick={this.SendMessage}>
-            Send
+
+        <div className="relative m-2">
+          <input
+            onChange={this.NewMessageChange}
+            value={this.state.NewMessageValue}
+            type="text"
+            className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+          />
+          <button
+            onClick={this.SendMessage}
+            className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
+          >
+            <FaPaperPlane />
           </button>
         </div>
       </div>
     );
   }
 }
-
-interface MessagesProps {
-  SendMessage: any, // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-  messages: any // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-}
-
-interface MessagesState {
-  NewMessageValue: string
-}
-
 
 export default Messages;

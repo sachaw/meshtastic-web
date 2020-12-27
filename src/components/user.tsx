@@ -1,17 +1,9 @@
 import * as React from "react";
 import { Component } from "react";
 
-class User extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-
+class User extends Component<any, any> {
   render() {
- 
-    return (
-      <div
-        className="User"
-      >
-        {JSON.stringify(this.props.user)}
-      </div>
-    );
+    return <div>{JSON.stringify(this.props.user)}</div>;
   }
 }
 

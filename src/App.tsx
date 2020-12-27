@@ -1,30 +1,23 @@
-import * as React from "react"
+import * as React from "react";
 import { Component } from "react";
-import "./App.css";
 import Sidebar from "./sidebar";
 import Messages from "./components/messages";
 import {
   Client,
-} from  "../node_modules/@meshtastic/meshtasticjs/dist/client";
-import {
+  IHTTPConnection,
   SettingsManager,
-} from  "../node_modules/@meshtastic/meshtasticjs/dist/settingsmanager";
+} from "@meshtastic/meshtasticjs";
 import PacketLog from "./components/PacketLog";
-import SampleData from "./SampleData";
 import HTTPStatus from "./components/httpstatus";
-import Users from './components/users';
-import * as Favicon from "../node_modules/react-favicon/dist/react-favicon";
-import DeviceSettings from './components/DeviceSettings';
-import DeviceFiles from './components/DeviceFiles';
+import Users from "./components/users";
+import Favicon from "react-favicon";
+import DeviceSettings from "./components/DeviceSettings";
+import DeviceFiles from "./components/DeviceFiles";
 
-class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-  httpconn;
+class App extends Component<any, any> {
+  httpconn = new IHTTPConnection();
 
-  SubOptions = {
-    name: "Meshtastic-Web"
-  };
-
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.addToMessageArray = this.addToMessageArray.bind(this);
     this.addToPacketArray = this.addToPacketArray.bind(this);
@@ -51,7 +44,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       users: [],
       radioConfig: {},
       myInfo: {},
-      user: {}
+      user: {},
     };
   }
 
@@ -59,58 +52,58 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     this.setupHTTP();
   }
 
-  addToMessageArray(newmessage) {
+  addToMessageArray(newmessage: any) {
     this.setState({
       messages: [...this.state.messages, newmessage],
     });
   }
 
-  addToPacketArray(newPacket) {
+  addToPacketArray(newPacket: any) {
     this.setState({
       packets: [...this.state.packets, newPacket],
     });
   }
 
-  changeView(newView) {
+  changeView(newView: any) {
     this.setState({
       currentView: newView,
     });
   }
 
-  SendMessage(message, callback) {
+  SendMessage(message: any, callback: any) {
     if (this.httpconn.isConnected) {
-      var send = this.httpconn.sendText(message);
+      this.httpconn.sendText(message);
     }
     callback();
   }
 
-  SetHTTPStatus(status) {
+  SetHTTPStatus(status: any) {
     this.setState({
       httpConnectionStatus: status,
     });
   }
 
-  SetRadioStatus(status) {
+  SetRadioStatus(status: any) {
     this.setState({
       radioPacketStatus: status,
     });
   }
 
-  SetConnectionStatus(status) {
+  SetConnectionStatus(status: any) {
     this.setState({
       radioIsConnected: status,
     });
   }
-  UpdateUserList(UserPacket) {
+  UpdateUserList(UserPacket: any) {
     const newUserDTO = {
       id: UserPacket.decoded.user.id,
       longName: UserPacket.decoded.user.longName,
       shortName: UserPacket.decoded.user.shortName,
-      lastSeen: UserPacket.rxtime
-    }
+      lastSeen: UserPacket.rxtime,
+    };
 
     this.setState({
-      users: [...this.state.users, newUserDTO]
+      users: [...this.state.users, newUserDTO],
     });
   }
 
@@ -127,21 +120,25 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       sslActive = false;
     }
 
-    let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
+    let deviceIp = "192.168.60.49";
+    // let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
     this.httpconn.onConnectedEvent.subscribe((event) => {
       this.SetConnectionStatus(true);
       console.log("connected To Radio");
-    }, this.SubOptions);
+    });
 
     this.httpconn.onDisconnectedEvent.subscribe((event) => {
       console.log("disconnected from Radio");
       this.SetConnectionStatus(false);
-    }, this.SubOptions);
+    });
 
     this.httpconn.onHTTPTransactionEvent.subscribe((event) => {
       this.SetHTTPStatus(event);
     });
 
+    // let data = this.httpconn.onFromRadioEvent.subscribe( fromRadio => {
+    //   fromRadio
+    // })
     this.httpconn.onFromRadioEvent.subscribe((event) => {
       console.log("Radio: " + JSON.stringify(event));
       this.addToPacketArray(event);
@@ -149,66 +146,63 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       this.SetRadioStatus({
         interaction_time: now.getTime(),
       });
-    }, this.SubOptions);
+    });
 
-    this.httpconn.onDataPacketEvent.subscribe((event,) => {
+    this.httpconn.onDataPacketEvent.subscribe((event) => {
       console.log("Data: " + JSON.stringify(event));
       this.addToMessageArray(event);
-    }, this.SubOptions);
+    });
 
     this.httpconn.onUserPacketEvent.subscribe((event) => {
       console.log("User: " + JSON.stringify(event));
       this.addToPacketArray(event);
       this.UpdateUserList(event);
-    }, this.SubOptions);
+    });
 
     this.httpconn.onPositionPacketEvent.subscribe((event) => {
       console.log("Position: " + JSON.stringify(event));
       this.addToPacketArray(event);
-    }, this.SubOptions);
+    });
 
     this.httpconn.onNodeListChangedEvent.subscribe((event) => {
       console.log("NodeList: " + JSON.stringify(event));
       this.addToPacketArray(event);
-    }, this.SubOptions);
+    });
 
     this.httpconn.onConfigDoneEvent.subscribe((event) => {
-
       this.addToPacketArray(event);
       this.setState({
         radioConfig: event.radioConfig,
         myInfo: event.myInfo,
-        user: event.user
-      })
-    }, this.SubOptions);
-
+        user: event.user,
+      });
+    });
 
     this.httpconn
-      .connect(deviceIp, sslActive, false, false, 'balanced', 5000)
-      .then((result) => {
-        if (false) {
-          console.log("Setting configs");
-          this.httpconn.setRadioConfig({
-            preferences: {
-              sendOwnerInterval: 10,
-              positionBroadcastSecs: 10,
-              waitBluetoothSecs: 86400,
-              screenOnSecs: 10,
-              minWakeSecs: 1000000
-            }
-          });
-          this.httpconn.setOwner({
-            id: "1",
-            longName: "charles",
-            shortName: "cc"
-          })
-        }
-      })
+      .connect(deviceIp, sslActive, false, false, "balanced", 5000)
+      // .then((result) => {
+      //   if (false) {
+      //     console.log("Setting configs");
+      //     this.httpconn.setRadioConfig(
+      //       new RadioConfig({
+
+      //       preferences: {
+      //         sendOwnerInterval: 10,
+      //         positionBroadcastSecs: 10,
+      //         waitBluetoothSecs: 86400,
+      //         screenOnSecs: 10,
+      //         minWakeSecs: 1000000,
+      //       },
+      //     }));
+      //     this.httpconn.setOwner({
+      //       id: "1",
+      //       longName: "charles",
+      //       shortName: "cc",
+      //     });
+      //   }
+      // })
       .catch((error) => {
         this.httpconn.isConnected = false;
-        //this.setState({
-        // messages: SampleData.messages
-        //})
         console.log("Error connecting: ");
         console.log(error);
       });
@@ -224,55 +218,63 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       );
     } else if (this.state.currentView === "packet_log") {
       return <PacketLog packets={this.state.packets} />;
-    } else if (this.state.currentView == "users_list") {
+    } else if (this.state.currentView === "users_list") {
       return <Users users={this.state.users} />;
-    } else if (this.state.currentView == "device_settings") {
-      return <DeviceSettings radioConfig={this.state.radioConfig} myInfo={this.state.myInfo} httpconn={this.httpconn} />;
-    }
-    else if (this.state.currentView == "device_files") {
-      return <DeviceFiles />
+    } else if (this.state.currentView === "device_settings") {
+      return (
+        <DeviceSettings
+          radioConfig={this.state.radioConfig}
+          myInfo={this.state.myInfo}
+          httpconn={this.httpconn}
+        />
+      );
+    } else if (this.state.currentView === "device_files") {
+      return <DeviceFiles />;
     }
   }
 
   GetFavicon() {
     if (this.state.radioIsConnected) {
-      return '/static/fav-con.svg'
-    }
-    else {
-      return '/static/fav-dis.svg';
+      return "/static/fav-con.svg";
+    } else {
+      return "/static/fav-dis.svg";
     }
   }
-
-
 
   render() {
     if (this.state.user) {
       return (
-        <div className="App">
-          <Favicon url={this.GetFavicon()} alertCount={this.state.messages.length} />
-          <div className="App-header">
-            <h2>Meshtastic</h2>
-          </div>
-          <div className="App-Body">{this.AppBody()}</div>
-          <div className="SidebarDiv">
-            <Sidebar changeView={this.changeView} currentUser={this.state.user} />
-          </div>
-          <div className="App-Footer">
-            <HTTPStatus
-              RadioIsConnected={this.state.radioIsConnected}
-              HTTPStatus={this.state.httpConnectionStatus}
-              RadioStatus={this.state.radioPacketStatus}
+        <div className="w-screen h-screen flex">
+          <Favicon
+            url={this.GetFavicon()}
+            alertCount={this.state.messages.length}
+          />
+          <div className="bg-gray-800">
+            <Sidebar
+              changeView={this.changeView}
+              currentUser={this.state.user}
             />
           </div>
+
+          <div className="w-full flex flex-col bg-gray-700">
+            <div className="h-8 w-full flex">
+              <h2 className="m-auto">Meshtastic</h2>
+            </div>
+            <div className="flex-grow overflow-y-auto bg-gray-200">
+              {this.AppBody()}
+            </div>
+            <div className="bg-black text-white">
+              <HTTPStatus
+                RadioIsConnected={this.state.radioIsConnected}
+                HTTPStatus={this.state.httpConnectionStatus}
+                RadioStatus={this.state.radioPacketStatus}
+              />
+            </div>
+          </div>
         </div>
       );
-    }
-    else {
-      return (
-        <div className="App">
-          Loading...
-        </div>
-      );
+    } else {
+      return <div className="">Loading...</div>;
     }
   }
 }
