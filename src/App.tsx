@@ -13,6 +13,8 @@ import Users from "./components/users";
 import Favicon from "react-favicon";
 import DeviceSettings from "./components/DeviceSettings";
 import DeviceFiles from "./components/DeviceFiles";
+import Map from "./Map";
+import { LogLevelEnum } from "@meshtastic/meshtasticjs/dist/protobuf";
 
 class App extends Component<any, any> {
   httpconn = new IHTTPConnection();
@@ -109,7 +111,7 @@ class App extends Component<any, any> {
 
   setupHTTP() {
     const client = new Client();
-    SettingsManager.setDebugMode(0);
+    SettingsManager.setDebugMode(LogLevelEnum.DEBUG);
     this.httpconn = client.createHTTPConnection();
 
     // Set connection params
@@ -132,6 +134,11 @@ class App extends Component<any, any> {
       this.SetConnectionStatus(false);
     });
 
+    this.httpconn.onTextPacketEvent.subscribe((event) => {
+      this.addToPacketArray(event);
+      console.log(event);
+    });
+
     this.httpconn.onHTTPTransactionEvent.subscribe((event) => {
       this.SetHTTPStatus(event);
     });
@@ -140,7 +147,7 @@ class App extends Component<any, any> {
     //   fromRadio
     // })
     this.httpconn.onFromRadioEvent.subscribe((event) => {
-      console.log("Radio: " + JSON.stringify(event));
+      console.log(event);
       this.addToPacketArray(event);
       const now = new Date();
       this.SetRadioStatus({
@@ -149,23 +156,23 @@ class App extends Component<any, any> {
     });
 
     this.httpconn.onDataPacketEvent.subscribe((event) => {
-      console.log("Data: " + JSON.stringify(event));
+      console.log(event);
       this.addToMessageArray(event);
     });
 
-    this.httpconn.onUserPacketEvent.subscribe((event) => {
-      console.log("User: " + JSON.stringify(event));
+    this.httpconn.onNodeInfoPacketEvent.subscribe((event) => {
+      console.log(event);
       this.addToPacketArray(event);
-      this.UpdateUserList(event);
+      this.UpdateUserList(event.data.user);
     });
 
     this.httpconn.onPositionPacketEvent.subscribe((event) => {
-      console.log("Position: " + JSON.stringify(event));
+      console.log(event);
       this.addToPacketArray(event);
     });
 
     this.httpconn.onNodeListChangedEvent.subscribe((event) => {
-      console.log("NodeList: " + JSON.stringify(event));
+      console.log(event);
       this.addToPacketArray(event);
     });
 
@@ -230,6 +237,8 @@ class App extends Component<any, any> {
       );
     } else if (this.state.currentView === "device_files") {
       return <DeviceFiles />;
+    } else if (this.state.currentView === "users_map") {
+      return <Map />;
     }
   }
 
@@ -253,13 +262,11 @@ class App extends Component<any, any> {
             <Sidebar
               changeView={this.changeView}
               currentUser={this.state.user}
+              currentView={this.state.currentView}
             />
           </div>
 
           <div className="w-full flex flex-col bg-gray-700">
-            <div className="h-8 w-full flex">
-              <h2 className="m-auto">Meshtastic</h2>
-            </div>
             <div className="flex-grow overflow-y-auto bg-gray-200">
               {this.AppBody()}
             </div>

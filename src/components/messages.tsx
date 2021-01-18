@@ -13,7 +13,8 @@ class Messages extends Component<any, any> {
     };
   }
 
-  SendMessage() {
+  SendMessage(e: any) {
+    e.preventDefault();
     this.props.SendMessage(this.state.NewMessageValue, () => {
       this.setState({
         NewMessageValue: "",
@@ -36,7 +37,7 @@ class Messages extends Component<any, any> {
           ))}
         </div>
 
-        <div className="relative m-2">
+        <form className="relative m-2" onSubmit={this.SendMessage}>
           <input
             onChange={this.NewMessageChange}
             value={this.state.NewMessageValue}
@@ -44,12 +45,12 @@ class Messages extends Component<any, any> {
             className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
           />
           <button
-            onClick={this.SendMessage}
+            type="submit"
             className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
           >
             <FaPaperPlane />
           </button>
-        </div>
+        </form>
       </div>
     );
   }

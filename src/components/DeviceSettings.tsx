@@ -16,7 +16,6 @@ class DeviceSettings extends Component<any, any> {
   static getDerivedStateFromProps(props: any, state: any) {
     // This will erase any local state updates!
     // Do not do this.
-    console.log(props);
     return {
       radioConfig: props.radioConfig,
       myInfo: props.myInfo,
@@ -24,10 +23,8 @@ class DeviceSettings extends Component<any, any> {
   }
 
   handlePreferenceChange(event: any) {
-    console.log(event);
     const newPreferences = this.state.radioConfig.preferences;
     newPreferences[event.target.name] = event.target.value;
-    console.log(newPreferences);
 
     const newRadioConfig = this.state.radioConfig;
     newRadioConfig.preferences = newPreferences;
@@ -71,8 +68,8 @@ class DeviceSettings extends Component<any, any> {
       )
       .sort();
 
-    const prefs = availableUserPreferences.map((key) => (
-      <div>
+    const prefs = availableUserPreferences.map((key, index) => (
+      <div key={index}>
         <span className="text-xl">{key} </span>
         <input
           className=""
@@ -84,10 +81,10 @@ class DeviceSettings extends Component<any, any> {
       </div>
     ));
 
-    const myInfo = Object.keys(this.state.myInfo).map((key) => (
-      <div>
-        <span className="settingLabel">{key} </span>
-        <span className="settingValue">{this.state.myInfo[key]}</span>
+    const myInfo = Object.keys(this.state.myInfo).map((key, index) => (
+      <div key={index}>
+        <span className="">{key} </span>
+        <span className="">{this.state.myInfo[key]}</span>
         <br />
       </div>
     ));
@@ -96,35 +93,21 @@ class DeviceSettings extends Component<any, any> {
       this.state.radioConfig.channelSettings
     ).map((key) => (
       <div>
-        <span className="settingLabel">{key} </span>
-        <span className="settingValue">
-          {this.state.radioConfig.channelSettings[key]}
-        </span>
+        <span className="">{key} </span>
+        <span className="">{this.state.radioConfig.channelSettings[key]}</span>
         <br />
       </div>
     ));
 
     return (
       <div className="flex">
-        <div className="flex flex-col">
-          <div className="UserPreferences">
-            <span className="SectionHeader">User Preferences</span>
-            <br />
-            {prefs}
-          </div>
-          <div className="ChannelSettings">
-            <span className="SectionHeader">Channel Settings</span>
-            <br />
-            {channelSettings}
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <div className="DeviceProfile">
+        <div className="flex flex-col w-1/2">
+          <div className="">
             <span className="text-2xl">Device Profile</span>
             <br />
             {myInfo}
           </div>
-          <div className="DeviceActions">
+          <div className="">
             <span className="text-2xl">Device Actions</span>
             <br />
             <button
@@ -160,6 +143,14 @@ class DeviceSettings extends Component<any, any> {
             </button>
             {this.unsavedChanges()}
           </div>
+          <div className="">
+            <span className="">Channel Settings</span>
+            <br />
+            {channelSettings}
+          </div>
+        </div>
+        <div className="flex flex-col w-1/2">
+          <div className="">{prefs}</div>
         </div>
       </div>
     );
