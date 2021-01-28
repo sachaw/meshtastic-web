@@ -1,8 +1,13 @@
+import { Protobuf } from "@meshtastic/meshtasticjs";
 import { PortNumEnum } from "@meshtastic/meshtasticjs/dist/protobuf";
 
-const PacketLog = (props: any) => {
-  const renderMeshPacet = (value: any) => {
-    switch (value.decoded.data.portnum) {
+interface PacketLogProps {
+  packets: Protobuf.FromRadio[];
+}
+
+const PacketLog = (props: PacketLogProps) => {
+  const renderMeshPacet = (value: Protobuf.FromRadio) => {
+    switch (value.packet.decoded.data.portnum) {
       case PortNumEnum.TEXT_MESSAGE_APP:
         return (
           <div className="flex">
@@ -10,7 +15,7 @@ const PacketLog = (props: any) => {
               <p className="m-auto font-bold">MeshPacket: Text</p>
             </div>
 
-            <p className="mx-2 my-auto">Message: {value.data}</p>
+            <p className="mx-2 my-auto">Message:</p>
           </div>
         );
 
@@ -20,7 +25,7 @@ const PacketLog = (props: any) => {
             <div className="flex h-full rounded-l p-2 bg-purple-300 w-1/5">
               <p className="m-auto font-bold">MeshPacket: Position</p>
             </div>
-
+            {/* 
             {value.data.latitudeI ? (
               <p className="mx-2 my-auto">Latitude: {value.data.latitudeI}</p>
             ) : (
@@ -47,20 +52,16 @@ const PacketLog = (props: any) => {
               <p className="mx-2 my-auto">Time: {value.data.time}</p>
             ) : (
               ""
-            )}
+            )} */}
           </div>
         );
 
       default:
-        return (
-          <p className="mx-2 my-auto">
-            Not found: {value.decoded.data.portnum}
-          </p>
-        );
+        return <p className="mx-2 my-auto">Not found: {value.num}</p>;
     }
   };
 
-  const renderpacket = (value: any) => {
+  const renderpacket = (value: Protobuf.FromRadio) => {
     switch (value.constructor.name) {
       case "IHTTPConnection":
         return (
@@ -80,7 +81,7 @@ const PacketLog = (props: any) => {
               <p className="m-auto font-bold">FromRadio</p>
             </div>
 
-            <p className="mx-2 my-auto">Packet: {value.packet.from}</p>
+            <p className="mx-2 my-auto">Packet: </p>
           </div>
         );
 
@@ -96,7 +97,7 @@ const PacketLog = (props: any) => {
 
   return (
     <div className="m-2">
-      {props.packets.map((value: any, index: any) => (
+      {props.packets.map((value, index) => (
         <div key={index} className="w-full bg-gray-400 m-2 rounded">
           {renderpacket(value)}
         </div>

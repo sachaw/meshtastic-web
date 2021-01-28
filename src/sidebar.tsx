@@ -1,74 +1,44 @@
-import * as React from "react";
+import { Link } from "react-router-dom";
 import {
   FaCog,
   FaEnvelope,
   FaFileAlt,
   FaFolder,
   FaMapMarkedAlt,
-  FaUsers,
+  FaProjectDiagram,
 } from "react-icons/fa";
 
-interface SidebarProps {
-  changeView: Function;
-  currentUser: any;
-  currentView: string;
-}
-
-const Sidebar = (props: SidebarProps) => {
-  const changeView = (newView: any) => {
-    props.changeView(newView);
-  };
-
+const Sidebar = () => {
   return (
     <div className="flex flex-col text-gray-400">
-      <div
-        onClick={() => changeView("messages")}
-        className={`p-4 m-auto hover:bg-gray-700 cursor-pointer ${
-          props.currentView === "messages" ? "bg-gray-700" : ""
-        }`}
+      <Link
+        className="p-4 m-auto hover:bg-gray-700 cursor-pointer"
+        to="messages"
       >
         <FaEnvelope />
-      </div>
-      <div
-        onClick={() => changeView("users_list")}
-        className={`p-4 m-auto hover:bg-gray-700 cursor-pointer ${
-          props.currentView === "users_list" ? "bg-gray-700" : ""
-        }`}
-      >
-        <FaUsers />
-      </div>
-      <div
-        onClick={() => changeView("users_map")}
-        className={`p-4 m-auto hover:bg-gray-700 cursor-pointer ${
-          props.currentView === "users_map" ? "bg-gray-700" : ""
-        }`}
-      >
+      </Link>
+
+      <Link className="p-4 m-auto hover:bg-gray-700 cursor-pointer" to="nodes">
+        <FaProjectDiagram />
+      </Link>
+      <Link className="p-4 m-auto hover:bg-gray-700 cursor-pointer" to="map">
         <FaMapMarkedAlt />
-      </div>
-      <div
-        onClick={() => changeView("packet_log")}
-        className={`p-4 m-auto hover:bg-gray-700 cursor-pointer ${
-          props.currentView === "packet_log" ? "bg-gray-700" : ""
-        }`}
+      </Link>
+      <Link
+        className="p-4 m-auto hover:bg-gray-700 cursor-pointer"
+        to="packets"
       >
         <FaFileAlt />
-      </div>
-      <div
-        onClick={() => changeView("device_files")}
-        className={`p-4 m-auto hover:bg-gray-700 cursor-pointer ${
-          props.currentView === "device_files" ? "bg-gray-700" : ""
-        }`}
-      >
+      </Link>
+      <Link className="p-4 m-auto hover:bg-gray-700 cursor-pointer" to="files">
         <FaFolder />
-      </div>
-      <div
-        onClick={() => changeView("device_settings")}
-        className={`p-4 m-auto hover:bg-gray-700 cursor-pointer ${
-          props.currentView === "device_settings" ? "bg-gray-700" : ""
-        }`}
+      </Link>
+      <Link
+        className="p-4 m-auto hover:bg-gray-700 cursor-pointer"
+        to="settings"
       >
         <FaCog />
-      </div>
+      </Link>
     </div>
   );
 };
