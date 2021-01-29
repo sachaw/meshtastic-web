@@ -18,7 +18,7 @@ import Sidebar from "./sidebar";
 const client = new Client();
 SettingsManager.setDebugMode(Protobuf.LogLevelEnum.TRACE);
 const connection = client.createHTTPConnection();
-connection.connect("192.168.47.35", false, false, false, "slow", 4000);
+connection.connect("192.168.47.221", false, false, false, "slow", 4000);
 
 const App = () => {
   const [messages, setMessages] = useState(
@@ -29,6 +29,7 @@ const App = () => {
   const [files, setFiles] = useState(
     undefined as void | Types.WebSPIFFSResponse
   );
+  const [myNode, setMyNode] = useState({} as Protobuf.MyNodeInfo);
 
   // const [radioConfig, setRadioConfig] = useState([]);
   // const [myInfo, setMyInfo] = useState({} as Protobuf.NodeInfo);
@@ -59,6 +60,7 @@ const App = () => {
       }
     );
     connection.onConfigEvent.subscribe((event) => {
+      setMyNode(event.myInfo);
       updateFiles();
     });
     return () => {
@@ -90,7 +92,7 @@ const App = () => {
             <Switch>
               <Route path="/messages">
                 <Messages
-                  myNodeId={123}
+                  myNodeId={myNode.myNodeNum}
                   messages={messages}
                   SendMessage={SendMessage}
                 />
@@ -127,6 +129,8 @@ const App = () => {
             elapsedMeshTime={elapsedMeshTime}
             totalNodes={nodes.length}
             spaceFree={files}
+            myNode={myNode}
+            nodes={nodes}
           />
         </div>
       </BrowserRouter>

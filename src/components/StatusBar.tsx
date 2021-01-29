@@ -1,8 +1,11 @@
-import { Types } from "@meshtastic/meshtasticjs";
-import { useState } from "react";
+import { Protobuf, Types } from "@meshtastic/meshtasticjs";
+import { useEffect, useState } from "react";
 import {
+  FaCompactDisc,
   FaConnectdevelop,
   FaFolder,
+  FaGlobeAmericas,
+  FaMicrochip,
   FaPlug,
   FaProjectDiagram,
   FaSpinner,
@@ -16,12 +19,22 @@ interface StatusBarProps {
   elapsedInterractionTime: number;
   totalNodes: number;
   spaceFree: void | Types.WebSPIFFSResponse;
+  myNode: Protobuf.MyNodeInfo;
+  nodes: Protobuf.NodeInfo[];
 }
 
 const StatusBar = (props: StatusBarProps) => {
+  const [myNodeInfo, setMyNodeInfo] = useState({} as Protobuf.NodeInfo);
+  useEffect(() => {
+    setMyNodeInfo(
+      props.nodes.filter((value) => {
+        return value.num === props.myNode.myNodeNum;
+      })[0]
+    );
+  }, [props.myNode, props.nodes]);
   return (
     <div className="flex text-gray-400">
-      <div className="hover:bg-gray-900">
+      <div className="flex hover:bg-gray-900">
         <FaPlug
           className={`${
             props.RadioIsConnected ===
@@ -30,6 +43,12 @@ const StatusBar = (props: StatusBarProps) => {
               : "text-red-500"
           } m-2`}
         />
+
+        {myNodeInfo ? (
+          <span className="my-auto mr-2">{myNodeInfo?.user?.longName}</span>
+        ) : (
+          ""
+        )}
       </div>
       {props.RadioIsConnected !== Types.ConnectionEventEnum.DEVICE_CONNECTED ? (
         <div className="flex hover:bg-gray-900">
@@ -65,6 +84,19 @@ const StatusBar = (props: StatusBarProps) => {
             ) : (
               <p className="m-auto">Loading</p>
             )}
+          </div>
+          <span className="flex-grow" />
+          <div className="flex hover:bg-gray-900">
+            <FaGlobeAmericas className="m-2" />
+            <span className="m-auto mr-2">{props.myNode.region}</span>
+          </div>
+          <div className="flex hover:bg-gray-900">
+            <FaMicrochip className="m-2" />
+            <span className="m-auto mr-2">{props.myNode.hwModel}</span>
+          </div>
+          <div className="flex hover:bg-gray-900">
+            <FaCompactDisc className="m-2" />
+            <span className="m-auto mr-2">{props.myNode.firmwareVersion}</span>
           </div>
         </>
       )}

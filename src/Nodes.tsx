@@ -52,11 +52,12 @@ const Nodes = (props: NodeProps) => {
         <div className="flex w-1/3 bg-gray-800 text-gray-400 rounded-lg shadow-xl p-4 m-2">
           <FaWaveSquare className="text-5xl mr-2" />{" "}
           <span className="my-auto text-2xl">
-            {props.nodes.reduce(
-              (previous, current) => previous + current.snr,
-              0
-            ) / props.nodes.length}{" "}
-            Average SNR
+            {`${(
+              props.nodes.reduce(
+                (previous, current) => previous + current.snr,
+                0
+              ) / props.nodes.length
+            ).toFixed(1)} Average SNR`}
           </span>
         </div>
       </div>
@@ -165,7 +166,9 @@ const Nodes = (props: NodeProps) => {
                     <span className="align-middle">MAC</span>
                   </div>
                   <div className="font-medium text-lg text-white">
-                    <span>{node.user.macaddr}</span>
+                    <span>
+                      {node.user?.macaddr ? node.user.macaddr : "Not avaliable"}
+                    </span>
                   </div>
                 </div>
               </div>

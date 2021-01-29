@@ -31,8 +31,8 @@ const Messages = (props: MessagesProps) => {
             key={index}
             className={`${
               value.packet.from === props.myNodeId
-                ? "float-left bg-gray-700"
-                : "float-right bg-gray-800"
+                ? "float-right bg-gray-800"
+                : "float-left bg-gray-700"
             } flex justify-between text-gray-300 w-3/4 mx-4 my-2 p-2 rounded-lg`}
           >
             {value.data}
