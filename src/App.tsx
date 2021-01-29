@@ -18,7 +18,14 @@ import Sidebar from "./sidebar";
 const client = new Client();
 SettingsManager.setDebugMode(Protobuf.LogLevelEnum.TRACE);
 const connection = client.createHTTPConnection();
-connection.connect("192.168.47.221", false, false, false, "slow", 4000);
+connection.connect(
+  localStorage.getItem("ip") || "",
+  false,
+  false,
+  false,
+  "slow",
+  4000
+);
 
 const App = () => {
   const [messages, setMessages] = useState(

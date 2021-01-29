@@ -5,6 +5,7 @@ import {
   FaConnectdevelop,
   FaFolder,
   FaGlobeAmericas,
+  FaLink,
   FaMicrochip,
   FaPlug,
   FaProjectDiagram,
@@ -25,6 +26,11 @@ interface StatusBarProps {
 
 const StatusBar = (props: StatusBarProps) => {
   const [myNodeInfo, setMyNodeInfo] = useState({} as Protobuf.NodeInfo);
+  const [ip, setIp] = useState(localStorage.getItem("ip") || "");
+
+  useEffect(() => {
+    localStorage.setItem("ip", ip);
+  }, [ip]);
   useEffect(() => {
     setMyNodeInfo(
       props.nodes.filter((value) => {
@@ -49,6 +55,18 @@ const StatusBar = (props: StatusBarProps) => {
         ) : (
           ""
         )}
+      </div>
+      <div className="flex group hover:bg-gray-900">
+        <FaLink className="m-2" />
+        <input
+          className="outline-none bg-gray-800 group-hover:bg-gray-900"
+          value={ip}
+          type="text"
+          placeholder={ip ? ip : "Please set IP"}
+          onChange={(event) => {
+            setIp(event.target.value);
+          }}
+        />
       </div>
       {props.RadioIsConnected !== Types.ConnectionEventEnum.DEVICE_CONNECTED ? (
         <div className="flex hover:bg-gray-900">
