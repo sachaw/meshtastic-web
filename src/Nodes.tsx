@@ -1,5 +1,4 @@
-import { NodeInfo, User } from "@meshtastic/meshtasticjs/dist/protobuf";
-import { time } from "console";
+import { NodeInfo } from "@meshtastic/meshtasticjs/dist/protobuf";
 import {
   FaAddressBook,
   FaBatteryEmpty,

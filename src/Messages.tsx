@@ -14,14 +14,14 @@ const Messages = (props: MessagesProps) => {
 
   useEffect(() => {
     props.messages.map((value) => {
-      setTempMessages(
+      return setTempMessages(
         tempMessages.filter(
           (string) =>
             string !== value.data && value.packet.from === props.myNodeId
         )
       );
     });
-  }, [props.messages]);
+  }, [props.messages, props.myNodeId, tempMessages]);
 
   return (
     <div className="flex flex-col h-full">

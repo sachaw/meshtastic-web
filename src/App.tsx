@@ -7,7 +7,6 @@ import {
 import { useEffect, useState } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import DeviceFiles from "./DeviceFiles";
-import DeviceSettings from "./DeviceSettings";
 import StatusBar from "./components/StatusBar";
 import Messages from "./Messages";
 import PacketLog from "./PacketLog";
@@ -38,12 +37,10 @@ const App = () => {
   );
   const [myNode, setMyNode] = useState({} as Protobuf.MyNodeInfo);
 
-  // const [radioConfig, setRadioConfig] = useState([]);
-  // const [myInfo, setMyInfo] = useState({} as Protobuf.NodeInfo);
   const [connectionStatus, setConnectionStatus] = useState(
     Types.ConnectionEventEnum.DEVICE_DISCONNECTED
   );
-  const [elapsedMeshTime, setElapsedMeshTime] = useState(new Date());
+  // const [elapsedMeshTime, setElapsedMeshTime] = useState(new Date());
   const [httpStatus, setHttpStatus] = useState({} as Types.HTTPTransaction);
 
   useEffect(() => {
@@ -111,13 +108,7 @@ const App = () => {
                 <Nodes nodes={nodes} />
               </Route>
 
-              <Route path="/settings">
-                {/* <DeviceSettings
-                  radioConfig={radioConfig}
-                  myInfo={myInfo}
-                  httpconn={connection}
-                /> */}
-              </Route>
+              <Route path="/settings"></Route>
               <Route path="/files">
                 <DeviceFiles
                   files={files}
@@ -133,7 +124,7 @@ const App = () => {
           <StatusBar
             RadioIsConnected={connectionStatus}
             elapsedInterractionTime={httpStatus.interaction_time}
-            elapsedMeshTime={elapsedMeshTime}
+            elapsedMeshTime={new Date()}
             totalNodes={nodes.length}
             spaceFree={files}
             myNode={myNode}
