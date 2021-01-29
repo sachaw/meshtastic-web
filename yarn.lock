@@ -1436,10 +1436,10 @@
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
   integrity sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==
 
-"@meshtastic/meshtasticjs@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@meshtastic/meshtasticjs/-/meshtasticjs-0.5.0.tgz#e4a9af307e9e61d0c79845f8013128b4295c6bcf"
-  integrity sha512-lWB4+dN/eatomJ6169nhBTDIDv90BRxydPPd3bxIdi24ErkZF2q3rYOXWSnrszvhuJJ2P7VXXeBc0oJR0mMeOg==
+"@meshtastic/meshtasticjs@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@meshtastic/meshtasticjs/-/meshtasticjs-0.5.1.tgz#baf9eebf6e07d95426c85878db48eed54553ea2c"
+  integrity sha512-ZULMTp7D8NluGFQmkPpYBCooiP6FyCv5VVHsgjhmnVXRPTMSyb5C+ZcXuwPxe7sFjjQoXwcFLFgDDpiK+2VDbw==
   dependencies:
     protobufjs "^6.10.2"
     rxjs "^6.6.3"

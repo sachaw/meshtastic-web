@@ -19,7 +19,7 @@ SettingsManager.setDebugMode(Protobuf.LogLevelEnum.TRACE);
 const connection = client.createHTTPConnection();
 connection.connect(
   localStorage.getItem("ip") || "",
-  false,
+  localStorage.getItem("tls") === "true",
   false,
   false,
   "slow",

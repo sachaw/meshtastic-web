@@ -9,6 +9,7 @@ import {
   FaMicrochip,
   FaPlug,
   FaProjectDiagram,
+  FaShieldAlt,
   FaSpinner,
   FaWifi,
 } from "react-icons/fa";
@@ -27,10 +28,14 @@ interface StatusBarProps {
 const StatusBar = (props: StatusBarProps) => {
   const [myNodeInfo, setMyNodeInfo] = useState({} as Protobuf.NodeInfo);
   const [ip, setIp] = useState(localStorage.getItem("ip") || "");
+  const [tls, setTls] = useState(localStorage.getItem("tls") === "true");
 
   useEffect(() => {
     localStorage.setItem("ip", ip);
   }, [ip]);
+  useEffect(() => {
+    localStorage.setItem("tls", tls ? "true" : "false");
+  }, [tls]);
   useEffect(() => {
     setMyNodeInfo(
       props.nodes.filter((value) => {
@@ -55,6 +60,15 @@ const StatusBar = (props: StatusBarProps) => {
         ) : (
           ""
         )}
+      </div>
+      <div
+        onClick={() => {
+          setTls(!tls);
+        }}
+        className="flex cursor-pointer hover:bg-gray-900"
+      >
+        <FaShieldAlt className="m-2" />
+        <span className="my-auto mr-2">TLS {tls ? "Enabled" : "Disabled"}</span>
       </div>
       <div className="flex group hover:bg-gray-900">
         <FaLink className="m-2" />
