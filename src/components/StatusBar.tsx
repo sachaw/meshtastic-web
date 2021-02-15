@@ -16,7 +16,7 @@ import {
 import TimeAgo from "timeago-react";
 
 interface StatusBarProps {
-  RadioIsConnected: Types.ConnectionEventEnum;
+  RadioIsConnected: Types.DeviceStatusEnum;
   elapsedMeshTime: Date;
   elapsedInterractionTime: number;
   totalNodes: number;
@@ -48,9 +48,11 @@ const StatusBar = (props: StatusBarProps) => {
       <div className="flex hover:bg-gray-900">
         <FaPlug
           className={`${
-            props.RadioIsConnected ===
-            Types.ConnectionEventEnum.DEVICE_CONNECTED
+            props.RadioIsConnected >= Types.DeviceStatusEnum.DEVICE_CONNECTED
               ? "text-green-500"
+              : props.RadioIsConnected ===
+                Types.DeviceStatusEnum.DEVICE_CONNECTING
+              ? "text-yellow-500"
               : "text-red-500"
           } m-2`}
         />
@@ -82,7 +84,7 @@ const StatusBar = (props: StatusBarProps) => {
           }}
         />
       </div>
-      {props.RadioIsConnected !== Types.ConnectionEventEnum.DEVICE_CONNECTED ? (
+      {props.RadioIsConnected !== Types.DeviceStatusEnum.DEVICE_CONFIGURED ? (
         <div className="flex hover:bg-gray-900">
           <FaSpinner className="m-2 animate-spin" />
           <span className="m-auto mr-2">Loading</span>

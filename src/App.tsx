@@ -15,14 +15,13 @@ import Map from "./Map";
 import Sidebar from "./sidebar";
 
 const client = new Client();
-SettingsManager.setDebugMode(Protobuf.LogLevelEnum.TRACE);
+SettingsManager.setDebugMode(Protobuf.LogLevelEnum.WARNING);
 const connection = client.createHTTPConnection();
 connection.connect(
   localStorage.getItem("ip") || "",
   localStorage.getItem("tls") === "true",
   false,
   false,
-  "slow",
   4000
 );
 
@@ -38,17 +37,22 @@ const App = () => {
   const [myNode, setMyNode] = useState({} as Protobuf.MyNodeInfo);
 
   const [connectionStatus, setConnectionStatus] = useState(
-    Types.ConnectionEventEnum.DEVICE_DISCONNECTED
+    Types.DeviceStatusEnum.DEVICE_DISCONNECTED
   );
   // const [elapsedMeshTime, setElapsedMeshTime] = useState(new Date());
-  const [httpStatus, setHttpStatus] = useState({} as Types.HTTPTransaction);
+  const [httpStatus, setHttpStatus] = useState({} as Types.DeviceTransaction);
 
   useEffect(() => {
-    const onHTTPTransactionEvent = connection.onHTTPTransactionEvent.subscribe(
+    const onHTTPTransactionEvent = connection.onDeviceTransactionEvent.subscribe(
       setHttpStatus
     );
-    const onConnectionEvent = connection.onConnectionEvent.subscribe(
-      setConnectionStatus
+    const onConnectionEvent = connection.onDeviceStatusEvent.subscribe(
+      (event) => {
+        setConnectionStatus(event);
+        if (event === Types.DeviceStatusEnum.DEVICE_CONFIGURED) {
+          updateFiles();
+        }
+      }
     );
     const onTextPacketEvent = connection.onTextPacketEvent.subscribe(
       (event) => {
@@ -57,16 +61,17 @@ const App = () => {
     );
     const onFromRadioEvent = connection.onFromRadioEvent.subscribe((event) => {
       setPackets([...packets, event]);
+      console.log(event);
     });
     const onNodeInfoPacketEvent = connection.onNodeInfoPacketEvent.subscribe(
       (event) => {
         setNodes([...nodes, event.data]);
       }
     );
-    connection.onConfigEvent.subscribe((event) => {
-      setMyNode(event.myInfo);
-      updateFiles();
+    connection.onMyNodeInfoEvent.subscribe((event) => {
+      setMyNode(event);
     });
+    connection.onRadioConfigEvent.subscribe((event) => {});
     return () => {
       onHTTPTransactionEvent.unsubscribe();
       onConnectionEvent.unsubscribe();
